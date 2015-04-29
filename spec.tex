@@ -1,0 +1,429 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{hyperref}
+
+\title{Tamanduang}
+\author{Vinícius dos Santos Oliveira}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Introdução}
+
+Tamanduang é uma linguagem imperativa, com tipagem estática. Nenhuma função
+\texttt{main} é necessária, pois o programa é avaliado e as instruções e
+expressões são executadas na ordem em que aparecem no código. A linguagem adota
+um modelo de avaliação gulosa.
+
+Em Tamanduang, a declaração de uma variável e sua inicialização devem ser feitas
+em etapas diferentes, mas todas as variáveis são implicitamente inicializadas
+para algum valor. Esse valor inicial é melhor documentado na referência de cada
+tipo que segue no texto, mas o princípio usado para a decisão desse valor
+inicial é que a variável deve ser usada causando o mínimo de erros, enquanto
+ainda fornece um valor usável.
+
+Funções são variáveis do tipo \texttt{fn}. A linguagem faz uso de escopo léxico
+e expressões lambda não capturam variáveis locais. Variáveis globais são
+permitidas, então reaproveitamento de código entre diferentes funções é feito
+dessa forma, se declarando variáveis no escopo global. Todas atribuições, assim
+como a passagem de argumentos para funções, são feitas por cópia. Entretanto,
+variáveis globais ainda são acessadas por referência, então ainda é possível ter
+um comportamento similar a característica de \emph{forward declaration} da
+linguagem C e fazer uso de funções recursivas.
+
+Como funções são variáveis, não há suporte a sobrecarga de funções.
+
+Em Tamanduang, variáveis só são visíveis após terem sido declaradas e somente no
+escopo que foram declaradas. E atribuições são instruções, não operadores.
+
+Toda essa preocupação com a abstração de rotinas foi feito pensado em uma maior
+unificação e uniformização de como as diferentes partes da linguagem são
+utilizadas. Outro exemplo dessa unificação é a sintaxe de acesso a um elemento
+de uma lista e as chamadas de funções, que possuem a mesma sintaxe.
+
+Uma parte podre dessa versão inicial da linguagem também está no suporte a
+listas, que se baseia em funções-padrões que estão sempre definidas, mas que só
+podem ser implementadas no compilador, pois seria necessário que a linguagem
+oferece suporte a programação genérica para permitir a implementação de
+abstrações com o mesmo poder expressivo fora do compilador.
+
+A linguagem não fornece suporte a bibliotecas, módulos, pacotes, compilação
+separada ou qualquer integração maior para dar suporte a reaproveitamento via
+código externo (ou compilado separadamente). Entretanto, um pré-processador da
+linguagem C, enquanto a linguagem Tamanduang não evolui, pode ser usado.
+
+Outro princípio que guia o desenvolvimento da linguagem é que ela possa ser
+usada, tanto como linguagem interpretada, quanto como linguagem compilada.
+
+O nome Tamanduang é uma brincadeira dos nomes Tamanduá e language.
+
+\subsection{Declaração de variáveis}
+
+Variáveis são declaradas através da seguinte sequência de tokens:
+
+\begin{itemize}
+\item Palavra-reservada \emph{var}.
+\item Identificador de variável.
+\item Caractere \emph{:}.
+\item Identificador do tipo.
+\item Caractere \emph{;}
+\end{itemize}
+
+Exemplo de uma declaração, onde declaramos a variável \emph{foobar} do tipo
+\emph{int32}:
+
+\begin{verbatim}
+var foobar: int32;
+\end{verbatim}
+
+\subsection{Tipos primitivos}
+
+Os tipos primitivos são:
+
+\begin{itemize}
+\item \texttt{none}.
+\item \texttt{bool}.
+\item \texttt{int32}.
+\item \texttt{double}.
+\item \texttt{uchar}.
+\end{itemize}
+
+\subsubsection{none}
+
+Nenhum valor pode ser atribuído a uma variável do tipo \texttt{none}. A maior
+utilidade desse tipo é declarar o tipo de retorno de funções que não retornam
+nada.
+
+Caso a linguagem desse suporte a \emph{pattern matching}, esse tipo poderia ser
+mais útil.
+
+\subsubsection{bool}
+
+Representa um valor booleano. Os valores possíveis são \texttt{true} e
+\texttt{false}.
+
+O valor inicial de uma variável \texttt{bool} é \texttt{false}.
+
+O operador unário \texttt{!} pode ser usado para inverter um valor
+booleano. O operador não possui efeitos colaterais. Exemplo:
+
+\begin{verbatim}
+var x: bool;
+x = !x;
+\end{verbatim}
+
+O operador binário infixo \texttt{and} realiza conjunção (e-lógico), enquanto o
+operador lógico \texttt{or} realiza disjunção (ou-lógico). Esses operadores têm
+associatividade da esquerda para a direita e possuem precedência menor que o
+operador de negação (i.e. \texttt{!}).
+
+\subsubsection{int32}
+
+Um inteiro com sinal que pode representar números do intervalo fechado definido
+por $-2147483648$ e $2147483647$.
+
+O valor inicial de uma variável \texttt{int32} é $0$.
+
+\subsubsection{double}
+
+Um número capaz de representar os valores possíveis da especificação de ponto
+flutuante de dupla precisão do padrão \emph{IEEE 754}.
+
+O valor inicial de uma variável \texttt{double} é $0.0$.
+
+\subsubsection{int32 e double}
+
+A lista de operações suportadas pelos tipos \texttt{int32} e \texttt{double} é
+especificada na tabela abaixo. Todas as operações são livres de efeitos
+colaterais.
+
+\begin{tabular}{| p{1.5cm} | p{2cm} | p{1.2cm} | p{1.2cm} | p{2.7cm} | p{5cm} | }
+%\begin{tabular}{| l l l l l l | }
+\hline
+Operador      & Precedência (menor é maior) & Unário/ binário & Pré-fixado/ pós-fixado/ infixo & Associatividade         & Resultado                                                                               \\
+\hline
+\hline
+-             & 1                           & unário         & pré-fixado                   &                         & O inverso negativo                                                                      \\
+\hline
+*             & 2                           & binário        & infixo                       & esquerda para a direita & Multiplicação                                                                           \\
+\hline
++             & 3                           & binário        & infixo                       & esquerda para a direita & Soma                                                                                    \\
+\hline
+\textless     & 4                           & binário        & infixo                       & esquerda para a direita & booleano representando se operando da esquerda é menor que operando da direita          \\
+\hline
+\textgreater  & 4                           & binário        & infixo                       & esquerda para a direita & booleano representando se operando da esquerda é maior que operando da direita          \\
+\hline
+\textless=    & 4                           & binário        & infixo                       & esquerda para a direita & booleano representando se operando da esquerda é menor ou igual que operando da direita \\
+\hline
+\textgreater= & 4                           & binário        & infixo                       & esquerda para a direita & booleano representando se operando da esquerda é maior ou igual que operando da direita \\
+\hline
+==            & 5                           & binário        & infixo                       & esquerda para a direita & booleano representando se operandos possuem o mesmo valor                               \\
+\hline
+!=            & 5                           & binário        & infixo                       & esquerda para a direita & booleano representando se operandos possuem valores diferentes \\
+\hline
+\end{tabular}
+
+\subsubsection{uchar}
+
+Armazena um \emph{code point} do padrão \emph{Unicode 7.0}.
+
+O valor inicial de uma variável \texttt{uchar} é \emph{U+0000}.
+
+\subsection{Tipos complexos}
+
+Os tipos complexos são:
+
+\begin{itemize}
+\item \texttt{list[T]}.
+\item \texttt{string}.
+\item \texttt{fn[Args..., Ret]}.
+\end{itemize}
+
+\subsubsection{list[T]}
+
+Representa uma sequência de valores do mesmo tipo. Os elementos são acessados
+por índice e o primeiro elemento recebe índice $0$, o segundo índice $1$ e assim
+por diante. Toda lista, imediatamente após sua declaração, não possui nenhum
+elemento. O índice sempre é do tipo \texttt{int32}.
+
+O tipo de cada elemento é decidido no momento da declaração, especificado
+através do identificador de tipo presente entre os tokens \texttt{[} e
+\texttt{]}. Exemplo:
+
+\begin{verbatim}
+var list_of_ints: list[int32];
+var list_of_functions_to_bool: list[fn[bool]];
+\end{verbatim}
+
+O tamanho da lista pode ser consultado através da função \texttt{size}, que
+recebe a lista como argumento e retorna seu tamanho (tipo \texttt{int32}).
+Exemplo:
+
+\begin{verbatim}
+size(list_of_ints);
+\end{verbatim}
+
+Um elemento da lista é acessado através do operador pós-fixado \texttt{()}, que
+retorna uma referência ao elemento associado aquele índice. O índice é
+especificado entre o caractere \texttt{(} e \texttt{)}. Exemplo:
+
+\begin{verbatim}
+var x: int32;
+x = list_of_ints(1);
+list_of_ints(0) = x;
+\end{verbatim}
+
+Elementos podem ser adicionados através da função \texttt{push}, que recebe como
+argumentos a lista na qual ela está operando, o índice do elemento a ser
+adicionado e o elemento a ser adicionado, respectivamente. O índice passado se
+tornará o índice do elemento adicionado e todos os elementos que estavam naquela
+posição e em posições seguintes serão movidos, tendo seus respectivos índices
+incrementados em $1$. O índice não pode ser menor que $0$ ou maior que o tamanho
+da lista, ou o elemento não será adicionado. A função retorna um booleano
+representando se o elemento foi adicionado. Exemplo:
+
+\begin{verbatim}
+push(list_of_ints, 0, 42);
+push(list_of_ints, 3, 1337);
+\end{verbatim}
+
+Elementos podem ser removidas através da função \texttt{pop}, que recebe como
+argumentos a lista na qual ela está operando e o índice do elemento a ser
+removido, respectivamente. Se o índice que não está associado a nenhum elemento
+for passado como argumento, a função não remove nenhum elemento. A função
+retorna um booleano representando se um elemento foi removido. Exemplo:
+
+\begin{verbatim}
+pop(list_of_ints, 0);
+\end{verbatim}
+
+A função \texttt{concat} recebe como argumentos duas listas do mesmo tipo e
+retorna uma lista que é o resultado da concatenação das duas listas. Exemplo:
+
+\begin{verbatim}
+var second_list_of_ints: list[int32];
+var result: list[int32];
+result = concat(list_of_ints, second_list_of_ints);
+\end{verbatim}
+
+\subsubsection{string}
+
+Um alias para \texttt{list[uchar]}.
+
+\subsubsection{fn[Args..., Ret]}
+
+Representa uma função. Uma sequência de tipos separados por vírgulas é
+especificada entre os colchetes que seguem a palavra reservada \texttt{fn}. O
+último desses tipos especifica o retorno da função, enquanto os outros
+especificam os argumentos da função. Ao menos um tipo deve ser especificado para
+formar um programa válido. Exemplo:
+
+\begin{verbatim}
+var next: fn[int, int];
+var print: fn[string, none];
+\end{verbatim}
+
+O valor inicial de uma variável desse tipo sempre será uma função que não
+realiza nenhuma operação.
+
+A uma dessas variáveis, pode ser atribuído uma closure (i.e. o resultado de uma
+expressão lambda) que possua a mesma assinatura que a função. A expressão lambda
+em Tamanduang é definida pela palavra reservada \texttt{fn}, seguida pelo token
+\texttt{(}, seguido de uma lista de argumentos (último sendo o retorno da
+função) que são especificados como declarações de variáveis que não possuem o
+caractere \texttt{,} e são separados por vírgula, seguido pelo token \texttt{)},
+seguido por um bloco de código que possui seu próprio escopo (definido através
+dos token \texttt{\{} e \texttt{\}}. O retorno da função é feito através da
+instrução \texttt{return}. Exemplo:
+
+\begin{verbatim}
+next = fn(var cur: int32, var ret: int32) {
+  ret = cur + 1;
+  return;
+};
+\end{verbatim}
+
+O exemplo anterior fez uso da variável de retorno. Essa variável é sempre
+inicializada pelas regras de valor inicial da especificação e pode ser
+livremente usada dentro do corpo da função.
+
+\subsection{Expressões}
+
+Parentêses podem ser usados para mudar a precedência.
+
+\subsubsection{Estrutura de controle condicional}
+
+É usada a palavra reservada \texttt{if}, seguido de uma expressão que retorne um
+booleano e um bloco de código. Exemplo:
+
+\begin{verbatim}
+if 2 < 3 {
+  var out: string;
+  push(out, 0, 'o');
+  push(out, 1, 'k');
+  print(out);
+};
+\end{verbatim}
+
+Um código a ser executado caso a condição avalie para falso também pode ser
+especificado, como mostra no exemplo a seguir:
+
+\begin{verbatim}
+if 2 < 3 {
+  var out: string;
+  push(out, 0, 'o');
+  push(out, 1, 'k');
+  print(out);
+} else {
+  var out: string;
+  push(out, 0, 'n');
+  push(out, 1, 'o');
+  print(out);
+};
+\end{verbatim}
+
+\subsubsection{Estrutura de repetição: while}
+
+Similar ao \texttt{if}. Repete o código enquanto a condição for
+verdadeira. Exemplo:
+
+\begin{verbatim}
+var x: int32;
+while x < 2 {
+  x = x + 1;
+  var out: string;
+  push(out, 0, '\n');
+  print(out);
+};
+\end{verbatim}
+
+\subsubsection{Estrutura de repetição: for ... until ...}
+
+Similar ao \texttt{while}, porém um identificador de variável é colocado após
+\texttt{for} e um literal do tipo \texttt{int32} é colocado após
+\texttt{until}. O código será repetido com a variável assumindo os valores entre
+$0$ até o valor especificado (inclusivo). Exemplo:
+
+\begin{verbatim}
+for x until 1 {
+  var out: string;
+  push(out, 0, '\n');
+  print(out);
+};
+\end{verbatim}
+
+\subsection{Entrada e saída}
+
+Funções para entrada:
+
+\begin{itemize}
+\item \texttt{read\_int32}: Lê um valor do tipo \texttt{int32}.
+\item \texttt{read\_string}: Lê uma palavra.
+\end{itemize}
+
+Funções para saída:
+
+\begin{itemize}
+\item \texttt{print}: Imprimi os caracteres passados pela sequência.
+\item \texttt{println}: Imprimi os caracteres passados pela sequência e imprimi
+  um final de linha.
+\end{itemize}
+
+\section{Exemplos}
+
+\subsection{Hello World}
+
+\begin{verbatim}
+var out: string;
+push(out, 0, 'H');
+push(out, 1, 'e');
+push(out, 2, 'l');
+push(out, 3, 'l');
+push(out, 4, 'o');
+push(out, 5, ' ');
+push(out, 6, 'W');
+push(out, 7, 'o');
+push(out, 8, 'r');
+push(out, 9, 'l');
+push(out, 10, 'd');
+println(out);
+\end{verbatim}
+
+\subsection{Fibonacci}
+
+\begin{verbatim}
+var fib: fn[int32, int32];
+fib = fn(var n: int32, var ret: int32) {
+  if n <= 0 {
+    return;
+  }
+
+  var i: int32;
+  var t: int32;
+
+  i = 1;
+  n = n - 1;
+
+  for k until n {
+    t = i + ret;
+    i = ret;
+    ret = t;
+  };
+  return;
+};
+
+var n: int32;
+n = read_int32();
+fib(n);
+\end{verbatim}
+
+\end{document}
