@@ -1,0 +1,284 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{hyperref}
+
+\title{Tamanduang - especificação dos tokens}
+\author{Vinícius dos Santos Oliveira}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Especificação dos tokens}
+
+\subsection{Expressões auxiliares}
+
+\begin{verbatim}
+DIGIT = ? all digits ?;
+LETTER = ? all alphabetic characters (uppercase and lowercase) ?;
+ALL_CHARS = ? all visible ASCII characters ?;
+\end{verbatim}
+
+\subsection{Tokens}
+
+\subsubsection{\texttt{COLON}}
+
+\begin{verbatim}
+COLON = ":";
+\end{verbatim}
+
+\subsubsection{\texttt{SEMICOLON}}
+
+\begin{verbatim}
+SEMICOLON = ";";
+\end{verbatim}
+
+\subsubsection{\texttt{LBRACKET}}
+
+\begin{verbatim}
+LBRACKET = "[";
+\end{verbatim}
+
+\subsubsection{\texttt{RBRACKET}}
+
+\begin{verbatim}
+RBRACKET = "]";
+\end{verbatim}
+
+\subsubsection{\texttt{LPAREN}}
+
+\begin{verbatim}
+LPAREN = "(";
+\end{verbatim}
+
+\subsubsection{\texttt{RPAREN}}
+
+\begin{verbatim}
+RPAREN = ")";
+\end{verbatim}
+
+\subsubsection{\texttt{LBRACE}}
+
+\begin{verbatim}
+LBRACE = "{";
+\end{verbatim}
+
+\subsubsection{\texttt{RBRACE}}
+
+\begin{verbatim}
+RBRACE = "}";
+\end{verbatim}
+
+\subsubsection{\texttt{COMMA}}
+
+\begin{verbatim}
+COMMA = ",";
+\end{verbatim}
+
+\subsubsection{\texttt{IDENTIFIER}}
+
+\begin{verbatim}
+IDENTIFIER = (LETTER | "_") { LETTER | "_" | DIGIT };
+\end{verbatim}
+
+\subsubsection{\texttt{VARKEYWORD}}
+
+\begin{verbatim}
+VARKEYWORD = "var";
+\end{verbatim}
+
+\subsubsection{\texttt{NONEDECLARATOR}}
+
+\begin{verbatim}
+NONEDECLARATOR = "none";
+\end{verbatim}
+
+\subsubsection{\texttt{BOOLDECLARATOR}}
+
+\begin{verbatim}
+BOOLDECLARATOR = "bool";
+\end{verbatim}
+
+\subsubsection{\texttt{INT32DECLARATOR}}
+
+\begin{verbatim}
+INT32DECLARATOR = "int32";
+\end{verbatim}
+
+\subsubsection{\texttt{DOUBLEDECLARATOR}}
+
+\begin{verbatim}
+DOUBLEDECLARATOR = "double";
+\end{verbatim}
+
+\subsubsection{\texttt{UCHARDECLARATOR}}
+
+\begin{verbatim}
+UCHARDECLARATOR = "uchar";
+\end{verbatim}
+
+\subsubsection{\texttt{LISTDECLARATOR}}
+
+\begin{verbatim}
+LISTDECLARATOR = "list";
+\end{verbatim}
+
+\subsubsection{\texttt{STRINGDECLARATOR}}
+
+\begin{verbatim}
+STRINGDECLARATOR = "string";
+\end{verbatim}
+
+\subsubsection{\texttt{FUNCTIONKEYWORD}}
+
+\begin{verbatim}
+FUNCTIONRECLARATOR = "fn";
+\end{verbatim}
+
+\subsubsection{\texttt{BOOLLIT}}
+
+\begin{verbatim}
+BOOLLIT = "true" | "false";
+\end{verbatim}
+
+\subsubsection{\texttt{INT32LIT}}
+
+\begin{verbatim}
+INT32LIT = DIGIT { DIGIT };
+\end{verbatim}
+
+\subsubsection{\texttt{DOUBLELIT}}
+
+\begin{verbatim}
+DOUBLELIT = DIGIT { DIGIT } "." DIGIT { DIGIT };
+\end{verbatim}
+
+\subsubsection{\texttt{UCHARLIT}}
+
+\begin{verbatim}
+UCHARLIT = ("U+" DIGIT DIGIT DIGIT DIGIT) | ("'" (ALL_CHARS - "'") "'");
+\end{verbatim}
+
+\subsubsection{\texttt{ASSIGNOPERATOR}}
+
+\begin{verbatim}
+ASSIGNOPERATOR = "=";
+\end{verbatim}
+
+\subsubsection{\texttt{NEGOPERATOR}}
+
+\begin{verbatim}
+NEGOPERATOR = "!";
+\end{verbatim}
+
+\subsubsection{\texttt{ANDOPERATOR}}
+
+\begin{verbatim}
+ANDOPERATOR = "and";
+\end{verbatim}
+
+\subsubsection{\texttt{OROPERATOR}}
+
+\begin{verbatim}
+OROPERATOR = "or";
+\end{verbatim}
+
+\subsubsection{\texttt{MINUSSIGN}}
+
+\begin{verbatim}
+MINUSSIGN = "-";
+\end{verbatim}
+
+\subsubsection{\texttt{PLUSOPERATOR}}
+
+\begin{verbatim}
+PLUSOPERATOR = "+";
+\end{verbatim}
+
+\subsubsection{\texttt{TIMESOPERATOR}}
+
+\begin{verbatim}
+TIMESOPERATOR = "*";
+\end{verbatim}
+
+\subsubsection{\texttt{LTOPERATOR}}
+
+\begin{verbatim}
+LTOPERATOR = "<";
+\end{verbatim}
+
+\subsubsection{\texttt{GTOPERATOR}}
+
+\begin{verbatim}
+GTOPERATOR = ">";
+\end{verbatim}
+
+\subsubsection{\texttt{LTEOPERATOR}}
+
+\begin{verbatim}
+LTEOPERATOR = "<=";
+\end{verbatim}
+
+\subsubsection{\texttt{GTEOPERATOR}}
+
+\begin{verbatim}
+GTEOPERATOR = ">=";
+\end{verbatim}
+
+\subsubsection{\texttt{EQOPERATOR}}
+
+\begin{verbatim}
+EQOPERATOR = "==";
+\end{verbatim}
+
+\subsubsection{\texttt{NEOPERATOR}}
+
+\begin{verbatim}
+NEOPERATOR = "!=";
+\end{verbatim}
+
+\subsubsection{\texttt{RETURN}}
+
+\begin{verbatim}
+RETURN = "return";
+\end{verbatim}
+
+\subsubsection{\texttt{IFKEYWORD}}
+
+\begin{verbatim}
+IFKEYWORD = "if";
+\end{verbatim}
+
+\subsubsection{\texttt{ELSEKEYWORD}}
+
+\begin{verbatim}
+ELSEKEYWORD = "else";
+\end{verbatim}
+
+\subsubsection{\texttt{WHILEKEYWORD}}
+
+\begin{verbatim}
+WHILEKEYWORD = "while";
+\end{verbatim}
+
+\subsubsection{\texttt{FORKEYWORD}}
+
+\begin{verbatim}
+FORKEYWORD = "for";
+\end{verbatim}
+
+\subsubsection{\texttt{UNTILKEYWORD}}
+
+\begin{verbatim}
+UNTILKEYWORD = "until";
+\end{verbatim}
+
+\end{document}
