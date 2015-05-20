@@ -1,0 +1,9 @@
+[package]
+
+name = "Tamanduang"
+version = "0.0.1"
+authors = [ "Vinícius dos Santos Oliveira <vini.ipsmaker@gmail.com>" ]
+
+[dependencies]
+
+regex = "0.1.30"
