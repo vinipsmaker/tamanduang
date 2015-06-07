@@ -119,7 +119,7 @@ fn gen_token(buffer: &str, line: u32, lexpos: u32)
     }
 }
 
-impl<'a, T: Read + Seek + 'a> Lexer<'a, T> {
+impl<'a, T: Read + Seek> Lexer<'a, T> {
     pub fn new(input: &'a mut T) -> Self {
         Lexer {
             input: input,
