@@ -353,7 +353,19 @@ mod tests {
     fn tokenizer_test() {
         use token::TokenCategory as Cat;
 
-        let mut source = Cursor::new("var out: string;\npush(out, 0, 'H');\r\npush(out, 1, 'e');\rpush(out, 2, 'l');\npush(out, 3, 'l');\npush(out, 4, 'o');\npush(out, 5, ' ');\npush(out, 6, 'W');\npush(out, 7, 'o');\npush(out, 8, 'r');\npush(out, 9, 'l');\npush(out, 10, 'd');\nprintln(out);\n".as_bytes());
+        let mut source = Cursor::new("var out: string;
+push(out, 0, 'H');\r
+push(out, 1, 'e');\rpush(out, 2, 'l');
+push(out, 3, 'l');
+push(out, 4, 'o');
+push(out, 5, ' ');
+push(out, 6, 'W');
+push(out, 7, 'o');
+push(out, 8, 'r');
+push(out, 9, 'l');
+push(out, 10, 'd');
+println(out);
+".as_bytes());
         let mut lex = Lexer::new(&mut source);
 
         assert_eq!(lex.nextToken(), Ok(Token::new(Cat::VARKEYWORD, 1, 4)));
